@@ -19,21 +19,26 @@
       {
         "command": "labavrplatform.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "labavrplatform.refresh",
+        "title": "Refresh",
+        "category": "LabAvrPlatform"
       }
     ],
     "views": {
       "labavrplatform": [
         {
-          "id": "projectConfig",
+          "id": "labavrplatform.configView.project",
           "name": "Project Configuration"
         },
         {
-          "id": "dependencies",
+          "id": "labavrplatform.configView.dependencies",
           "name": "Dependencies",
           "when": "false"
         },
         {
-          "id": "toolchain",
+          "id": "labavrplatform.configView.toolchain",
           "name": "Toolchain"
         }
       ]
@@ -49,11 +54,12 @@
     },
     "viewsWelcome": [
       {
-        "view": "projectConfig",
-        "contents": "You have not yet opened a project.\n[New Project](command:labavrplatform.helloWorld)\n[Open Project](command:labavrplatform.openProject)\nYou can learn more about using the platform in the [user manual](https://github.com/dx3mod/LabAvrPlatform)."
+        "view": "labavrplatform.configView.project",
+        "contents": "You have not yet opened a project.\n[New Project](command:labavrplatform.helloWorld)\n[Open Project](command:labavrplatform.openProject)\nYou can learn more about using the platform in the [user manual](https://github.com/dx3mod/LabAvrPlatform).",
+        "when": "!isLabAvrProject"
       },
       {
-        "view": "toolchain",
+        "view": "labavrplatform.configView.toolchain",
         "contents": "Toolchain not loaded or not found on your system."
       }
     ]
