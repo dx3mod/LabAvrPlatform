@@ -1,7 +1,8 @@
 import * as vscode from "vscode";
 import { refreshProject } from "./commands/refresh";
+import { captureToolchainEnv } from "./toolchain";
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, "labavrplatform" is now active!');
 
   refreshProject();

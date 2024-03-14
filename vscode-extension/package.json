@@ -35,11 +35,7 @@
         {
           "id": "labavrplatform.configView.dependencies",
           "name": "Dependencies",
-          "when": "false"
-        },
-        {
-          "id": "labavrplatform.configView.toolchain",
-          "name": "Toolchain"
+          "when": "isLabAvrProject"
         }
       ]
     },
@@ -59,8 +55,8 @@
         "when": "!isLabAvrProject"
       },
       {
-        "view": "labavrplatform.configView.toolchain",
-        "contents": "Toolchain not loaded or not found on your system."
+        "view": "labavrplatform.configView.dependencies",
+        "contents": "The project has no dependencies."
       }
     ]
   },
@@ -73,14 +69,18 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.87.0",
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
+    "@types/vscode": "^1.87.0",
+    "@types/which": "^3.0.3",
     "@typescript-eslint/eslint-plugin": "^7.0.2",
     "@typescript-eslint/parser": "^7.0.2",
-    "eslint": "^8.56.0",
-    "typescript": "^5.3.3",
     "@vscode/test-cli": "^0.0.6",
-    "@vscode/test-electron": "^2.3.9"
+    "@vscode/test-electron": "^2.3.9",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "which": "^4.0.0"
   }
 }
