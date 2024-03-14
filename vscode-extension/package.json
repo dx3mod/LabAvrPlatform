@@ -24,6 +24,11 @@
         "command": "labavrplatform.refresh",
         "title": "Refresh",
         "category": "LabAvrPlatform"
+      },
+      {
+        "command": "labavrplatform.newProject",
+        "title": "Initialize a new AVR C/C++ project",
+        "category": "LabAvrPlatform"
       }
     ],
     "views": {
@@ -51,7 +56,7 @@
     "viewsWelcome": [
       {
         "view": "labavrplatform.configView.project",
-        "contents": "You have not yet opened a project.\n[New Project](command:labavrplatform.helloWorld)\n[Open Project](command:labavrplatform.openProject)\nYou can learn more about using the platform in the [user manual](https://github.com/dx3mod/LabAvrPlatform).",
+        "contents": "You have not yet opened a project.\n[New Project](command:labavrplatform.newProject)\n[Open Project](command:labavrplatform.openProject)\nYou can learn more about using the platform in the [user manual](https://github.com/dx3mod/LabAvrPlatform).",
         "when": "!isLabAvrProject"
       },
       {

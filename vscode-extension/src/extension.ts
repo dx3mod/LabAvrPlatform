@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { refreshProject } from "./commands/refresh";
-import { captureToolchainEnv } from "./toolchain";
+import { newProject } from "./commands/new_project";
 
 export async function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, "labavrplatform" is now active!');
@@ -9,6 +9,10 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand("labavrplatform.refresh", refreshProject),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("labavrplatform.newProject", newProject),
   );
 
   // The command has been defined in the package.json file
