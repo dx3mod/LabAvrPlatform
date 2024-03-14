@@ -3,19 +3,58 @@
   "displayName": "LabAvrPlatform",
   "description": "Lab-based development platform for AVR C/C++ projects.",
   "version": "0.0.1",
+  "license": "MIT",
   "engines": {
     "vscode": "^1.87.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "workspaceContains:LabAvrProject.json"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "labavrplatform.helloWorld",
         "title": "Hello World"
+      }
+    ],
+    "views": {
+      "labavrplatform": [
+        {
+          "id": "projectConfig",
+          "name": "Project Configuration"
+        },
+        {
+          "id": "dependencies",
+          "name": "Dependencies",
+          "when": "false"
+        },
+        {
+          "id": "toolchain",
+          "name": "Toolchain"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "labavrplatform",
+          "title": "Lab Avr Platform",
+          "icon": "media/logo.svg"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "projectConfig",
+        "contents": "You have not yet opened a project.\n[New Project](command:labavrplatform.helloWorld)\n[Open Project](command:labavrplatform.openProject)\nYou can learn more about using the platform in the [user manual](https://github.com/dx3mod/LabAvrPlatform)."
+      },
+      {
+        "view": "toolchain",
+        "contents": "Toolchain not loaded or not found on your system."
       }
     ]
   },
