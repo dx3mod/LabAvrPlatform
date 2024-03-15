@@ -51,13 +51,17 @@ export async function newProject() {
         label: "Assembler",
         description: "experimental support",
       },
+      {
+        label: "Free Pascal",
+        description: "not supported",
+      },
     ],
     {
       title: "Выберите язык программирования",
     },
   ))?.label;
 
-  if (!progLang) {
+  if (!progLang || progLang === "Free Pascal") {
     return;
   }
 
@@ -216,5 +220,5 @@ interface ProjectKind extends vscode.QuickPickItem {
 }
 
 interface ProgrammingLanguage extends vscode.QuickPickItem {
-  label: "C" | "C++" | "Assembler";
+  label: "C" | "C++" | "Assembler" | "Free Pascal";
 }
