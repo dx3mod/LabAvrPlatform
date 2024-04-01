@@ -13,6 +13,7 @@
         "labavrplatform",
         "microcontroll",
         "microcontroller",
+        "mmcu",
         "nothrow",
         "objcopy",
         "objdump"

@@ -166,13 +166,15 @@ int main(void) {
     // TODO: implement library project type creating
   }
 
+  const config = createLabAvrProjectConfig({
+    artifactName: projectName,
+    target: (targetMcu ? { mcu: targetMcu, hz: targetHz! } : undefined),
+  });
+
   fs.writeFile(
     ProjectConfigFileName,
     JSON.stringify(
-      createLabAvrProjectConfig({
-        artifactName: projectName,
-        target: (targetMcu ? { mcu: targetMcu, hz: targetHz! } : undefined),
-      }),
+      config,
       null,
       2,
     ),
