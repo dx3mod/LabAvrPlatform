@@ -200,6 +200,14 @@ async function askProjectName() {
 async function checkInstalledToolchain() {
   const toolchainEnv = await CurrentToolchainEnv;
 
+  if (!toolchainEnv.compilerPath && !toolchainEnv.programmerPath) {
+    vscode.window.showWarningMessage(
+      "Not installed toolchain for development under AVR!",
+      "Install",
+    );
+    return;
+  }
+
   if (!toolchainEnv.compilerPath) {
     vscode.window.showWarningMessage(
       "Not installed AVR GCC toolchain!",
