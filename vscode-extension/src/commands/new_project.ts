@@ -8,6 +8,7 @@ import { MCU_ALL_LIST } from "../mcus";
 import * as fs from "fs/promises";
 import { join } from "path";
 import { existsSync } from "fs";
+import { createLabAvrProjectConfig } from "../labproject";
 
 export async function newProject() {
   await checkInstalledToolchain();
@@ -99,6 +100,8 @@ export async function newProject() {
       }
     } else if (mhz) {
       targetHz = Number.parseInt(mhz) * 1_000_000; // convert MHz into Hz
+    } else {
+      targetHz = 1_000_000;
     }
   }
 
@@ -154,8 +157,7 @@ export async function newProject() {
 
       fs.writeFile(
         `src/main.${fileExt}`,
-        `#include <avr/io.h>
-
+        `
 int main(void) {
   while (1) {
   }
@@ -166,14 +168,13 @@ int main(void) {
     // TODO: implement library project type creating
   }
 
-  // mock
   fs.writeFile(
     ProjectConfigFileName,
     JSON.stringify(
-      {
-        name: projectName,
-        target: targetMcu ? { mcu: targetMcu, hz: targetHz } : undefined,
-      },
+      createLabAvrProjectConfig({
+        artifactName: projectName,
+        target: (targetMcu ? { mcu: targetMcu, hz: targetHz! } : undefined),
+      }),
       null,
       2,
     ),

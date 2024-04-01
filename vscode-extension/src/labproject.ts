@@ -6,7 +6,7 @@ export const LabAvrProjectConfigScheme = z.object({
   target: z.object({
     mcu: z.string(),
     hz: z.number(),
-  }),
+  }).optional(),
 
   layout: z.object({
     sourcesDir: z.string(),
