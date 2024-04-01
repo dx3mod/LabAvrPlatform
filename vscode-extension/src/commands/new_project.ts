@@ -11,8 +11,6 @@ import { existsSync } from "fs";
 import { createLabAvrProjectConfig } from "../labproject";
 
 export async function newProject() {
-  await checkInstalledToolchain();
-
   let projectName = await askProjectName();
 
   if (!projectName) {
@@ -196,32 +194,6 @@ async function askProjectName() {
     placeHolder: "some-new-cool-blink-project",
     value: "blink",
   });
-}
-
-async function checkInstalledToolchain() {
-  const toolchainEnv = await CurrentToolchainEnv;
-
-  if (!toolchainEnv.compilerPath && !toolchainEnv.programmerPath) {
-    vscode.window.showWarningMessage(
-      "Not installed toolchain for development under AVR!",
-      "Install",
-    );
-    return;
-  }
-
-  if (!toolchainEnv.compilerPath) {
-    vscode.window.showWarningMessage(
-      "Not installed AVR GCC toolchain!",
-      "Install",
-    );
-  }
-
-  if (!toolchainEnv.programmerPath) {
-    vscode.window.showWarningMessage(
-      "Not installed AVRDUDE programmer!",
-      "Install",
-    );
-  }
 }
 
 interface ProjectKind extends vscode.QuickPickItem {

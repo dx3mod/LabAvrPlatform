@@ -1,7 +1,13 @@
 import * as vscode from "vscode";
-import { checkIsLabAvrProjectDir, VsCodeHelpers } from "../utils";
+import {
+  checkInstalledToolchain,
+  checkIsLabAvrProjectDir,
+  VsCodeHelpers,
+} from "../utils";
 
 export function refreshProject() {
+  checkInstalledToolchain();
+
   if (vscode.workspace.workspaceFolders) {
     const workspaceFolder = vscode.workspace.workspaceFolders[0];
 

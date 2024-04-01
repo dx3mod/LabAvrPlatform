@@ -24,3 +24,30 @@ export const VsCodeHelpers = {
     );
   },
 };
+
+
+export async function checkInstalledToolchain() {
+  const toolchainEnv = await CurrentToolchainEnv;
+
+  if (!toolchainEnv.compilerPath && !toolchainEnv.programmerPath) {
+    vscode.window.showWarningMessage(
+      "Not installed toolchain for development under AVR!",
+      "Install",
+    );
+    return;
+  }
+
+  if (!toolchainEnv.compilerPath) {
+    vscode.window.showWarningMessage(
+      "Not installed AVR GCC toolchain!",
+      "Install",
+    );
+  }
+
+  if (!toolchainEnv.programmerPath) {
+    vscode.window.showWarningMessage(
+      "Not installed AVRDUDE programmer!",
+      "Install",
+    );
+  }
+}
