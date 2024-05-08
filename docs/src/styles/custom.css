@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+
+* {
+    font-family: "Ubuntu";
+    font-display: swap;
+}
+
+/* Dark mode colors. */
+:root {
+	--sl-color-accent-low: #2d1f26;
+	--sl-color-accent: #8b5770;
+	--sl-color-accent-high: #d6c2cb;
+	--sl-color-white: #ffffff;
+	--sl-color-gray-1: #eeeded;
+	--sl-color-gray-2: #c2c2c2;
+	--sl-color-gray-3: #8c8b8b;
+	--sl-color-gray-4: #595858;
+	--sl-color-gray-5: #393838;
+	--sl-color-gray-6: #272626;
+	--sl-color-black: #181818;
+}
+
+/* Light mode colors. */
+:root[data-theme='light'] {
+	--sl-color-accent-low: #e1d2d8;
+	--sl-color-accent: #8d5972;
+	--sl-color-accent-high: #412a35;
+	--sl-color-white: #181818;
+	--sl-color-gray-1: #272626;
+	--sl-color-gray-2: #393838;
+	--sl-color-gray-3: #595858;
+	--sl-color-gray-4: #8c8b8b;
+	--sl-color-gray-5: #c2c2c2;
+	--sl-color-gray-6: #eeeded;
+	--sl-color-gray-7: #f6f6f6;
+	--sl-color-black: #ffffff;
+}
