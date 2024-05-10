@@ -1,0 +1,19 @@
+{
+  "name": "avr-project-builder",
+  "version": "0.0.1",
+  "description": "A small build-tool for AVR C/C++ projects",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "dx3mod",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.12.11",
+    "typescript": "^5.4.5"
+  }
+}
