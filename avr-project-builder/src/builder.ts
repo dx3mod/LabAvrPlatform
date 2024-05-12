@@ -77,15 +77,32 @@ export class AvrProject {
 
   async resolveRequires(requires: RequireMacro[]) {
     for (const requireMacro of requires) {
-      const filePath = path.parse(requireMacro.file);
-      const resourcePath = path.join(filePath.dir, requireMacro.resourcePath);
+      if (!this.solution.enableRequireMacros) continue;
 
-      if (
-        existsSync(resourcePath) &&
-        (await fs.stat(resourcePath)).isDirectory()
-      )
+      const filePath = path.parse(requireMacro.file);
+
+      const resourcePath =
+        requireMacro.resourcePath.startsWith("./") ||
+        requireMacro.resourcePath.startsWith("../")
+          ? path.join(filePath.dir, requireMacro.resourcePath)
+          : path.join(this.rootDir, requireMacro.resourcePath);
+
+      if (!existsSync(resourcePath))
+        throw new Error(`Not found '${resourcePath}'`);
+
+      const resourceStat = await fs.stat(resourcePath);
+
+      if (resourceStat.isDirectory())
         await this.requireAvrProject(resourcePath);
-      else console.log(`Not support require '${resourcePath}'!`);
+      else if (resourceStat.isFile() && resourcePath.match(HEADER_FILE_EXTS)) {
+        const resourcePathDir = path.parse(resourcePath).dir;
+
+        if (!resourcePathDir.startsWith(this.sourceDir))
+          await this.requireExternalLibrary(resourcePathDir);
+
+        if (requireMacro.kind === "require")
+          this.units.headers.push(resourcePath);
+      }
     }
   }
 
@@ -105,8 +122,20 @@ export class AvrProject {
     this.units.extends(builder.units);
   }
 
+  async requireExternalLibrary(rootDir: string) {
+    console.log(rootDir);
+
+    const sources = await glob("*.{c,cxx,cpp}", {
+      cwd: rootDir,
+      absolute: true,
+      ignore: ["examples", "example", "tests", "test", "docs"],
+    });
+
+    this.units.passes.push(...sources);
+  }
+
   get sourceDir() {
-    return path.join(this.rootDir, this.solution.rootDir);
+    return path.resolve(path.join(this.rootDir, this.solution.rootDir));
   }
 
   get artifactsDir() {
