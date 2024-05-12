@@ -1,4 +1,3 @@
-import { open } from "fs/promises";
 import ProjectUnits from "./project_units";
 import { AvrProjectSolution, AvrProjectSolutionSchema } from "./solution";
 import fs from "fs/promises";
@@ -93,16 +92,27 @@ export class AvrProject {
 
       const resourceStat = await fs.stat(resourcePath);
 
-      if (resourceStat.isDirectory())
-        await this.requireAvrProject(resourcePath);
-      else if (resourceStat.isFile() && resourcePath.match(HEADER_FILE_EXTS)) {
+      if (resourceStat.isDirectory()) {
+        const configFilePath = path.join(resourcePath, "LabAvrProject.json");
+
+        if (existsSync(configFilePath))
+          await this.requireAvrProject(resourcePath);
+        else {
+          await this.requireExternalLibrary(resourcePath, false);
+        }
+      } else if (
+        resourceStat.isFile() &&
+        resourcePath.match(HEADER_FILE_EXTS)
+      ) {
         const resourcePathDir = path.parse(resourcePath).dir;
 
         if (!resourcePathDir.startsWith(this.sourceDir))
-          await this.requireExternalLibrary(resourcePathDir);
+          await this.requireExternalLibrary(resourcePathDir, true);
 
         if (requireMacro.kind === "require")
-          this.units.headers.push(resourcePath);
+          if (this.solution.singleNamespace)
+            this.units.headers.push(resourcePath);
+          else this.units.includes.push(resourcePath);
       }
     }
   }
@@ -123,8 +133,16 @@ export class AvrProject {
     this.units.extends(builder.units);
   }
 
-  async requireExternalLibrary(rootDir: string) {
-    console.log(rootDir);
+  async requireExternalLibrary(rootDir: string, byHeader: boolean) {
+    console.log("requireExternalLibrary", rootDir);
+
+    if (!byHeader) {
+      const sourceDirs = await glob("{src,Src,Sources,source}/", {
+        cwd: rootDir,
+      });
+
+      if (sourceDirs) rootDir = path.join(rootDir, sourceDirs[0]);
+    }
 
     const sources = await glob("*.{c,cxx,cpp}", {
       cwd: rootDir,
