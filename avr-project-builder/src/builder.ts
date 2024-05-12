@@ -70,14 +70,15 @@ export class AvrProject {
       this.units.headers.push(...headers.map(([filename, _]) => filename));
     }
 
-    for (const filename of sources) {
-      await this.resolveRequires(await getRequires(filename));
-    }
+    if (this.solution.resolveImports)
+      for (const filename of sources) {
+        await this.resolveRequires(await getRequires(filename));
+      }
   }
 
   async resolveRequires(requires: RequireMacro[]) {
     for (const requireMacro of requires) {
-      if (!this.solution.enableRequireMacros) continue;
+      if (!this.solution.requireMacros) continue;
 
       const filePath = path.parse(requireMacro.file);
 

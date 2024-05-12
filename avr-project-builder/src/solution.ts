@@ -22,7 +22,7 @@ const Configuration = z.object({
 });
 
 const AvrProjectSolutionSchema = z.object({
-  name: z.string(),
+  name: z.string().optional(),
   target: z
     .object({
       mcu: z.string(),
@@ -47,7 +47,9 @@ const AvrProjectSolutionSchema = z.object({
   strict: z.boolean().default(true),
 
   singleNamespace: z.boolean().default(true),
-  enableRequireMacros: z.boolean().default(true),
+
+  requireMacros: z.boolean().default(true),
+  resolveImports: z.boolean().default(true),
 });
 
 type AvrProjectSolution = z.infer<typeof AvrProjectSolutionSchema>;
