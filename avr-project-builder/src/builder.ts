@@ -166,10 +166,10 @@ async function getRequires(filename: string) {
   const contents = await fs.readFile(filename, { encoding: "utf8" });
 
   const requires = Array.from(
-    contents.matchAll(/$\s*require\s*\(\s*".+"\s*\)/gm)
+    contents.matchAll(/^\s*require\s*\(\s*".+"\s*\)/gm)
   ).map((x) => new RequireMacro("require", x[0], filename));
 
-  const includes = Array.from(contents.matchAll(/$\s*#include\s*".+"/gm)).map(
+  const includes = Array.from(contents.matchAll(/^\s*#include\s*".+"/gm)).map(
     (x) => new RequireMacro("include", x[0], filename)
   );
 
