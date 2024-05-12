@@ -8,6 +8,8 @@ const Configuration = z.object({
         .union([z.number().min(0).max(3), z.literal("s"), z.literal("z")])
         .default("s"),
       noStd: z.boolean().default(false),
+      lto: z.boolean().default(false),
+      args: z.array(z.string()).optional(),
     })
     .default({}),
 
@@ -33,11 +35,15 @@ const AvrProjectSolutionSchema = z.object({
 
   configurations: z
     .object({
-      // debug: z.never(),
+      debug: Configuration,
       release: Configuration,
     })
-    .default({ release: {} }),
+    .default({
+      release: { compilerOptions: { lto: true } },
+      debug: { compilerOptions: { lto: false } },
+    }),
 
+  singleNamespace: z.boolean().default(true),
   enableRequireMacros: z.boolean().default(true),
 });
 
