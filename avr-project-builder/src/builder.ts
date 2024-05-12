@@ -9,6 +9,7 @@ import { glob } from "glob";
 const SOURCE_FILE_EXTS = new RegExp(`\.(c|cpp|cxx|s|asm)$`);
 const OBJECT_FILE_EXTS = new RegExp(`\.o$`);
 const HEADER_FILE_EXTS = new RegExp(`\.(h|hpp|hxx)$`);
+const ATTACHMENTS_FILE_EXTS = new RegExp(`\.(bin|txt)$`);
 
 export class AvrProject {
   public readonly units: ProjectUnits;
@@ -100,10 +101,11 @@ export class AvrProject {
         else {
           await this.requireExternalLibrary(resourcePath, false);
         }
-      } else if (
-        resourceStat.isFile() &&
-        resourcePath.match(HEADER_FILE_EXTS)
-      ) {
+      }
+
+      if (!resourceStat.isFile()) continue;
+
+      if (resourcePath.match(HEADER_FILE_EXTS)) {
         const resourcePathDir = path.parse(resourcePath).dir;
 
         if (!resourcePathDir.startsWith(this.sourceDir))
@@ -113,6 +115,10 @@ export class AvrProject {
           if (this.solution.singleNamespace)
             this.units.headers.push(resourcePath);
           else this.units.includes.push(resourcePath);
+      } else if (resourcePath.match(ATTACHMENTS_FILE_EXTS)) {
+        await this.requireAttachment(resourcePath);
+      } else {
+        console.log(`Not support '${resourcePath}' requiring!`);
       }
     }
   }
@@ -134,8 +140,6 @@ export class AvrProject {
   }
 
   async requireExternalLibrary(rootDir: string, byHeader: boolean) {
-    console.log("requireExternalLibrary", rootDir);
-
     if (!byHeader) {
       const sourceDirs = await glob("{src,Src,Sources,source}/", {
         cwd: rootDir,
@@ -151,6 +155,10 @@ export class AvrProject {
     });
 
     this.units.passes.push(...sources);
+  }
+
+  async requireAttachment(filename: string) {
+    this.units.attachments.push({ kind: "bin", path: filename });
   }
 
   get sourceDir() {
