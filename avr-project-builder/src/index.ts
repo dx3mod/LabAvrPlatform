@@ -1,2 +1,2 @@
 export { AvrProjectSolution, AvrProjectSolutionSchema } from "./solution";
-export { AvrProjectBuilder } from "./builder";
+export { AvrProject } from "./builder";

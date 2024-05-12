@@ -1,44 +1,116 @@
-import path from "node:path";
-import { AvrProjectSolution } from "./solution";
-import fs from "node:fs/promises";
+import { open } from "fs/promises";
+import ProjectUnits from "./project_units";
+import { AvrProjectSolution, AvrProjectSolutionSchema } from "./solution";
+import fs from "fs/promises";
+import path from "path";
 import RequireMacro from "./require_macro";
-
-type ProjectUnits = Readonly<{
-  sources: string[];
-  headers: string[];
-  requires: RequireMacro[];
-}>;
+import { existsSync } from "fs";
+import { glob } from "glob";
 
 const SOURCE_FILE_EXTS = new RegExp(`\.(c|cpp|cxx|s|asm)$`);
+const OBJECT_FILE_EXTS = new RegExp(`\.o$`);
 const HEADER_FILE_EXTS = new RegExp(`\.(h|hpp|hxx)$`);
 
-export class AvrProjectBuilder {
-  constructor(public readonly solution: AvrProjectSolution) {}
+export class AvrProject {
+  public readonly units: ProjectUnits;
 
-  async resolveProjectFiles(): Promise<ProjectUnits> {
-    const units: ProjectUnits = { sources: [], headers: [], requires: [] };
+  constructor(
+    public readonly rootDir: string,
+    public readonly solution: AvrProjectSolution
+  ) {
+    this.units = new ProjectUnits();
+  }
 
-    // meh filterMap
-    const dir = fs.opendir(this.solution.rootDir, { recursive: true });
-    for await (const entry of await dir) {
-      if (entry.isFile()) {
-        const entryPath = path.join(entry.parentPath, entry.name);
+  async resolve() {
+    // NOTE: here performance dies
 
-        const isSourceFileMatch = entry.name.match(SOURCE_FILE_EXTS);
-        const isHeaderFileMatch = entry.name.match(HEADER_FILE_EXTS);
+    const ignore = [`${this.artifactsDir}/**`, ...this.solution.excludes];
 
-        if (isSourceFileMatch) {
-          units.sources.push(entryPath);
-        } else if (isHeaderFileMatch) {
-          units.headers.push(entryPath);
+    const convert = (filename: string): [string, path.ParsedPath] => [
+      filename,
+      path.parse(filename),
+    ];
+
+    const sources = await glob(`**/*.{c,cxx,cpp}`, {
+      cwd: this.sourceDir,
+      absolute: true,
+      ignore,
+    });
+
+    const headers = (
+      await glob(`**/*.{h,hpp,hxx}`, {
+        cwd: this.sourceDir,
+        absolute: true,
+        ignore,
+      })
+    ).map(convert);
+
+    if (this.solution.singleNamespace) {
+      for (const filename of sources) {
+        const parsedPath = path.parse(filename);
+
+        const headerOfFile = headers.find(
+          ([_, { name }]) => parsedPath.name === name
+        );
+
+        if (headerOfFile) {
+          this.units.includes.push(headerOfFile[0]);
+          this.units.passes.push(filename);
+        } else {
+          this.units.includes.push(filename);
         }
-
-        if (isHeaderFileMatch || isSourceFileMatch)
-          units.requires.push(...(await getRequires(entryPath)));
       }
+
+      for (const [filename, _] of headers) {
+        if (!this.units.includes.includes(filename))
+          this.units.includes.push(filename);
+      }
+    } else {
+      this.units.passes.push(...sources);
+      this.units.headers.push(...headers.map(([filename, _]) => filename));
     }
 
-    return units;
+    for (const filename of sources) {
+      await this.resolveRequires(await getRequires(filename));
+    }
+  }
+
+  async resolveRequires(requires: RequireMacro[]) {
+    for (const requireMacro of requires) {
+      const filePath = path.parse(requireMacro.file);
+      const resourcePath = path.join(filePath.dir, requireMacro.resourcePath);
+
+      if (
+        existsSync(resourcePath) &&
+        (await fs.stat(resourcePath)).isDirectory()
+      )
+        await this.requireAvrProject(resourcePath);
+      else console.log(`Not support require '${resourcePath}'!`);
+    }
+  }
+
+  async requireAvrProject(rootDir: string) {
+    const configFilePath = path.join(rootDir, "LabAvrProject.json");
+
+    if (!existsSync(configFilePath))
+      throw new Error(`Not found LabAvrProject.json at '${configFilePath}'!`);
+
+    const solution = AvrProjectSolutionSchema.parse(
+      JSON.parse(await fs.readFile(configFilePath, { encoding: "utf8" }))
+    );
+
+    const builder = new AvrProject(rootDir, solution);
+    await builder.resolve();
+
+    this.units.extends(builder.units);
+  }
+
+  get sourceDir() {
+    return path.join(this.rootDir, this.solution.rootDir);
+  }
+
+  get artifactsDir() {
+    return path.join(this.rootDir, this.solution.outDir);
   }
 }
 
@@ -46,12 +118,12 @@ async function getRequires(filename: string) {
   const contents = await fs.readFile(filename, { encoding: "utf8" });
 
   const requires = Array.from(
-    contents.matchAll(/$\s*require\s*\(\s*".+"\s*\)\s*^/gm)
+    contents.matchAll(/$\s*require\s*\(\s*".+"\s*\)/gm)
   ).map((x) => new RequireMacro("require", x[0], filename));
 
-  const includes = Array.from(
-    contents.matchAll(/$\s*#include\s*".+"\s*^/gm)
-  ).map((x) => new RequireMacro("include", x[0], filename));
+  const includes = Array.from(contents.matchAll(/$\s*#include\s*".+"/gm)).map(
+    (x) => new RequireMacro("include", x[0], filename)
+  );
 
   return requires.concat(includes);
 }

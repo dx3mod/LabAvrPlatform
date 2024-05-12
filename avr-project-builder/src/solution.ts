@@ -32,6 +32,7 @@ const AvrProjectSolutionSchema = z.object({
 
   rootDir: z.string().default("src"),
   outDir: z.string().default("_build"),
+  excludes: z.array(z.string()).default([]),
 
   configurations: z
     .object({
@@ -42,6 +43,8 @@ const AvrProjectSolutionSchema = z.object({
       release: { compilerOptions: { lto: true } },
       debug: { compilerOptions: { lto: false } },
     }),
+
+  strict: z.boolean().default(true),
 
   singleNamespace: z.boolean().default(true),
   enableRequireMacros: z.boolean().default(true),
