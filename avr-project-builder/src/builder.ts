@@ -13,12 +13,14 @@ const ATTACHMENTS_FILE_EXTS = new RegExp(`\.(bin|txt)$`);
 
 export class AvrProject {
   public readonly units: ProjectUnits;
+  private readonly requireReferences: Map<string, RequireMacro>;
 
   constructor(
     public readonly rootDir: string,
     public readonly solution: AvrProjectSolution
   ) {
     this.units = new ProjectUnits();
+    this.requireReferences = new Map();
   }
 
   async resolve() {
@@ -88,6 +90,8 @@ export class AvrProject {
           ? path.join(filePath.dir, requireMacro.resourcePath)
           : path.join(this.rootDir, requireMacro.resourcePath);
 
+      if (this.requireReferences.has(resourcePath)) continue;
+
       if (!existsSync(resourcePath))
         throw new Error(`Not found '${resourcePath}'`);
 
@@ -120,6 +124,8 @@ export class AvrProject {
       } else {
         console.log(`Not support '${resourcePath}' requiring!`);
       }
+
+      this.requireReferences.set(resourcePath, requireMacro);
     }
   }
 
