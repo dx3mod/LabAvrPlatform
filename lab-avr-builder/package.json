@@ -1,0 +1,30 @@
+{
+  "name": "lab-avr-builder",
+  "version": "0.0.1",
+  "description": "A small build-system for AVR C/C++ projects",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dx3mod/LabAvrPlatform.git"
+  },
+  "keywords": [
+    "build-system",
+    "avr"
+  ],
+  "author": "dx3mod",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dx3mod/LabAvrPlatform/issues"
+  },
+  "homepage": "https://github.com/dx3mod/LabAvrPlatform#readme",
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  }
+}
