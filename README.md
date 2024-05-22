@@ -5,5 +5,5 @@
 
 ## Документация
 
-- [Веб-страница проекта](https://dx3mod.github.io/LabAvrPlatform/)
+- [Веб-страница проекта](https://labavrplatform.vercel.app/)
 - Для разработчиков 
