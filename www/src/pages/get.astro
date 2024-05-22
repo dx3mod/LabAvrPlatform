@@ -1,0 +1,58 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import { SITE_TITLE, SITE_DESCRIPTION } from "../config";
+
+export const prerender = true;
+
+const repo = "dx3mod/LabAvrPlatform";
+const resp = await fetch(
+	`https://api.github.com/repos/${repo}/releases?per_page=1`
+);
+const releases = JSON.parse(await resp.text());
+---
+
+<!doctype html>
+<html lang="ru">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<table>
+				<thead>
+					<tr>
+						<th>Тег</th>
+						<th>Дата</th>
+						<th>Файл</th>
+					</tr>
+				</thead>
+				<tbody>
+					{
+						releases.map((release: any) =>
+							release.assets.map((asset: any) => (
+								<tr>
+									<td>{release.name}</td>
+									<td>
+										{new Date(
+											release.published_at
+										).toLocaleDateString()}
+									</td>
+									<td>
+										<a href={asset.browser_download_url}>
+											{asset.name}
+										</a>
+									</td>
+								</tr>
+							))
+						)
+					}
+				</tbody>
+			</table>
+		</main>
+
+		<Footer />
+	</body>
+</html>
