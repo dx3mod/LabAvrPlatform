@@ -1,0 +1,44 @@
+{
+  "scopeName": "source.labavrplatform",
+  "patterns": [{ "include": "#expression" }],
+  "repository": {
+    "expression": {
+      "patterns": [
+        { "include": "#keywords" },
+        { "include": "#comment" },
+        { "include": "#freq" },
+        { "include": "#mhz" },
+        { "include": "#paren-expression" }
+      ]
+    },
+    "keywords": {
+      "match": "target|name|depends|resources|lang|struct|build|program|dev",
+      "name": "keyword"
+    },
+    "comment": {
+      "begin": "\\;",
+      "end": "$",
+      "name": "comment"
+    },
+    "freq": {
+      "match": "\\s[\\d_]+",
+      "name": "constant.numeric"
+    },
+    "mhz": {
+      "match": "mhz",
+      "name": "comment"
+    },
+    "paren-expression": {
+      "begin": "\\(",
+      "end": "\\)",
+      "beginCaptures": {
+        "0": { "name": "punctuation.paren.open" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.paren.close" }
+      },
+      "name": "expression.group",
+      "patterns": [{ "include": "#expression" }]
+    }
+  }
+}
