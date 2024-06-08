@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
 import { refreshProject } from "./commands/refresh";
 import { newProject } from "./commands/new_project";
+import { buildProject } from "./commands/build_project";
+import { uploadProject } from "./commands/upload_project";
 
 export async function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, "labavrplatform" is now active!');
@@ -8,11 +10,19 @@ export async function activate(context: vscode.ExtensionContext) {
   refreshProject();
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("labavrplatform.refresh", refreshProject),
+    vscode.commands.registerCommand("labavrplatform.refresh", refreshProject)
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("labavrplatform.newProject", newProject),
+    vscode.commands.registerCommand("labavrplatform.newProject", newProject)
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("labavrplatform.buildProject", buildProject)
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("labavrplatform.uploadProject", uploadProject)
   );
 
   // The command has been defined in the package.json file
@@ -24,7 +34,7 @@ export async function activate(context: vscode.ExtensionContext) {
       // The code you place here will be executed every time your command is executed
       // Display a message box to the user
       vscode.window.showInformationMessage("Hello World from LabAvrPlatform!");
-    },
+    }
   );
 
   context.subscriptions.push(disposable);

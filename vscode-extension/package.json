@@ -11,7 +11,7 @@
     "Other"
   ],
   "activationEvents": [
-    "workspaceContains:LabAvrProject.json"
+    "workspaceContains:LabAvrProject"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -29,8 +29,32 @@
         "command": "labavrplatform.newProject",
         "title": "Initialize a new AVR C/C++ project",
         "category": "LabAvrPlatform"
+      },
+      {
+        "command": "labavrplatform.buildProject",
+        "title": "Build",
+        "category": "LabAvrPlatform"
+      },
+      {
+        "command": "labavrplatform.uploadProject",
+        "title": "Upload",
+        "category": "LabAvrPlatform"
       }
     ],
+    "menus": {
+      "editor/title/run": [
+        {
+          "command": "labavrplatform.uploadProject",
+          "group": "LabAvrPlatform",
+          "when": "isLabAvrProject"
+        },
+        {
+          "command": "labavrplatform.buildProject",
+          "group": "LabAvrPlatform",
+          "when": "isLabAvrProject"
+        }
+      ]
+    },
     "views": {
       "labavrplatform": [
         {

@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import {
-  CurrentToolchainEnv,
   ProjectConfigFileName,
   VsCodeHelpers,
 } from "../utils";
@@ -8,7 +7,6 @@ import { MCU_ALL_LIST } from "../mcus";
 import * as fs from "fs/promises";
 import { join } from "path";
 import { existsSync } from "fs";
-import { createLabAvrProjectConfig } from "../labproject";
 
 export async function newProject() {
   let projectName = await askProjectName();
@@ -17,75 +15,82 @@ export async function newProject() {
     return;
   }
 
-  const projectKind = (await vscode.window.showQuickPick<ProjectKind>(
-    [
+  const projectKind = (
+    await vscode.window.showQuickPick<ProjectKind>(
+      [
+        {
+          label: "Firmware",
+          detail:
+            "Executable programme that is loaded into the microcontroller.",
+          iconPath: new vscode.ThemeIcon("chip"),
+        },
+        {
+          label: "Library",
+          detail: "Reusable code for use in other projects.",
+          iconPath: new vscode.ThemeIcon("library"),
+        },
+      ],
       {
-        label: "Firmware",
-        detail: "Executable programme that is loaded into the microcontroller.",
-        iconPath: new vscode.ThemeIcon("chip"),
-      },
-      {
-        label: "Library",
-        detail: "Reusable code for use in other projects.",
-        iconPath: new vscode.ThemeIcon("library"),
-      },
-    ],
-    {
-      title: "Project Type",
-    },
-  ))?.label;
+        title: "Project Type",
+      }
+    )
+  )?.label;
 
   if (!projectKind) {
     return;
   }
 
-  const progLang = (await vscode.window.showQuickPick<ProgrammingLanguage>(
-    [
+  const progLang = (
+    await vscode.window.showQuickPick<ProgrammingLanguage>(
+      [
+        {
+          label: "C",
+          description: "optimal for most projects",
+        },
+        { label: "C++", description: "for rich logic programming" },
+        {
+          label: "Assembler",
+          description: "experimental support",
+        },
+        // {
+        //   label: "Free Pascal",
+        //   description: "not supported",
+        // },
+      ],
       {
-        label: "C",
-        description: "optimal for most projects",
-      },
-      { label: "C++", description: "for rich logic programming" },
-      {
-        label: "Assembler",
-        description: "experimental support",
-      },
-      {
-        label: "Free Pascal",
-        description: "not supported",
-      },
-    ],
-    {
-      title: "Выберите язык программирования",
-    },
-  ))?.label;
+        title: "Select a programming language",
+      }
+    )
+  )?.label;
 
   if (!progLang || progLang === "Free Pascal") {
     return;
   }
 
   let targetMcu: string | undefined = undefined;
-  let targetHz = undefined;
+  let targetFreq: string | undefined = undefined;
 
   if (projectKind === "Firmware") {
     targetMcu = await vscode.window.showQuickPick(MCU_ALL_LIST, {
       title: "Target MCU",
     });
 
-    let mhz = (await vscode.window.showQuickPick(
-      [
-        { label: "1", description: "MHz" },
-        { label: "4", description: "MHz" },
-        { label: "8", description: "MHz" },
-        { label: "16", description: "MHz" },
-        { label: "Other" },
-      ],
-      { title: "Operating frequency of the MCU in MHz" },
-    ))?.label;
+    let mhz = (
+      await vscode.window.showQuickPick(
+        [
+          { label: "1", description: "MHz" },
+          { label: "4", description: "MHz" },
+          { label: "8", description: "MHz" },
+          { label: "16", description: "MHz" },
+          { label: "Other" },
+        ],
+        { title: "Operating frequency of the MCU in MHz" }
+      )
+    )?.label;
 
     if (mhz === "Other") {
       vscode.window.showInformationMessage(
-        "You can change the frequency of the MCU at any time.",
+        "You can change the frequency of the MCU at any time."
       );
 
       const hz = await vscode.window.showInputBox({
@@ -94,12 +99,10 @@ export async function newProject() {
       });
 
       if (hz) {
-        targetHz = Number.parseInt(hz.replace("_", ""));
+        targetFreq = hz.replace("_", "");
       }
     } else if (mhz) {
-      targetHz = Number.parseInt(mhz) * 1_000_000; // convert MHz into Hz
-    } else {
-      targetHz = 1_000_000;
+      targetFreq = `${mhz}mhz`;
     }
   }
 
@@ -130,7 +133,7 @@ export async function newProject() {
     if (existsSync(projectLocation)) {
       const action = await vscode.window.showErrorMessage(
         `The '${projectLocation}' project already exist!`,
-        "Rename",
+        "Rename"
       );
 
       if (action === "Rename") {
@@ -155,34 +158,26 @@ export async function newProject() {
 
       fs.writeFile(
         `src/main.${fileExt}`,
-        `
-int main(void) {
+        `int main(void) {
   while (1) {
   }
-}`,
+}`
       );
     }
-  } else { // Library
+  } else {
+    // Library
     // TODO: implement library project type creating
   }
 
-  const config = createLabAvrProjectConfig({
-    artifactName: projectName,
-    target: (targetMcu ? { mcu: targetMcu, hz: targetHz! } : undefined),
-  });
+  const target = targetMcu
+    ? `(target ${targetMcu}` + (targetFreq ? ` ${targetFreq})` : ")")
+    : "";
 
-  fs.writeFile(
-    ProjectConfigFileName,
-    JSON.stringify(
-      config,
-      null,
-      2,
-    ),
-  );
+  fs.writeFile(ProjectConfigFileName, `(name ${projectName})\n${target}\n`);
 
   const action = await vscode.window.showInformationMessage(
     "The project was successfully set up. Open it?",
-    "Open",
+    "Open"
   );
 
   if (action === "Open") {

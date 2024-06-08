@@ -3,7 +3,7 @@ import { existsSync } from "fs";
 import { join } from "path";
 import { detectTEnvironment } from "./toolchain";
 
-export const ProjectConfigFileName = "LabAvrProject.json";
+export const ProjectConfigFileName = "LabAvrProject";
 export const Extension = { name: "Lab Avr Platform", id: "labavrplatform" };
 
 export const CurrentToolchainEnv = detectTEnvironment();
