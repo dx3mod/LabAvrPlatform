@@ -8,10 +8,10 @@ export async function buildProject() {
     currentWorkspace,
     "Build the project",
     "LabAvrPlatform",
-    new vscode.ProcessExecution("bavar", ["build", "-clangd"], {
+    new vscode.ProcessExecution("bavar", ["build", "-c-cpp-properties"], {
       cwd: currentWorkspace.uri.path,
     }),
-    []
+    ["$gcc"]
   );
 
   vscode.tasks.executeTask(buildTask);
