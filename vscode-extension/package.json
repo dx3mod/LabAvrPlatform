@@ -107,24 +107,10 @@
         "contents": "The project has no dependencies."
       }
     ],
-    "problemMatchers": [
-      {
-        "name": "gcc",
-        "owner": "cpp",
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
-        "pattern": {
-          "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
-          "file": 1,
-          "line": 2,
-          "column": 3,
-          "severity": 4,
-          "message": 5
-        }
-      }
-    ]
+    "problemMatcher": {
+      "base": "$gcc",
+      "fileLocation": "absolute"
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

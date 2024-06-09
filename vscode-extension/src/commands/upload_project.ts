@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { getIntegrationBackendFlag } from "../utils";
 
 export async function uploadProject() {
   const currentWorkspace = vscode.workspace.workspaceFolders![0];
@@ -10,7 +11,7 @@ export async function uploadProject() {
     "LabAvrPlatform",
     new vscode.ProcessExecution(
       "bavar",
-      ["build", "@upload", "-c-cpp-properties"],
+      ["build", "@upload", getIntegrationBackendFlag()],
       {
         cwd: currentWorkspace.uri.path,
       }
