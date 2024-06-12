@@ -1,27 +1,27 @@
 # LabAvrPlatform
-<!-- Lab-based development platform for AVR C/C++ projects. -->
 
-Лабораторная платформа для организации полнофункциональной разработки под микроконтроллеры AVR на языках программирования C, C++ и ассемблер.
+Lab-based platform for organizing full-featured development for AVR microcontrollers in C, C++ and assembly languages.
+
+This is an extension to VSCode to integrate the [bavar][bavar] build system.
+
+#### Integrated functionality
+
+- Project creation
+- Build and upload commands
+- Choosing between Microsoft C/C++ Extension or Clangd
+
+## Preview
 
 ![](./doc/preview.png)
 
-Представляет из себя интеграционное решение, состоящие из [самодостаточной системы сборки][bavar] и [расширения к текстовому редактору](./vscode-extension/) для её интеграции.
+## Installation
 
-## Особенности
+🚧 Now only works on Unix-like systems!
 
-- ✍️ Диктуемая организация проекта (с отсутствием boilerplate конфигурации)
-- 🏗️ Сборка с разрешением внешних зависимостей 
-    + Автовключение файлов (единое пространство имён)
-    + Бандлинг ресурсов в прошивку
-- 🔌 Загрузка прошивки на МК (powered by avrdude)
+- [Requirements](https://github.com/dx3mod/bavar/blob/master/README.md#installation)
 
-## Установка
+#### Prebuilt binaries
 
-- [Бинарный дистрибутив](https://github.com/dx3mod/LabAvrPlatform/releases)
-
-<!-- ## Документация
-
-- [Веб-страница проекта](https://labavrplatform.vercel.app/)
-- Для разработчиков -->
+To get prebuilt binaries, see the [releases page](https://github.com/dx3mod/LabAvrPlatform/releases).
 
 [bavar]: https://github.com/dx3mod/bavar
